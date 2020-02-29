@@ -4,6 +4,8 @@ import time
 
 from pythonosc import udp_client
 
+NUM_SENT = 60
+
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument("--ip", default="127.0.0.1",
@@ -14,7 +16,8 @@ if __name__ == "__main__":
 
   client = udp_client.SimpleUDPClient(args.ip, args.port)
 
-  for x in range(10):
-    print(random.random())
-    client.send_message("/filter", random.random())
+  for x in range(NUM_SENT):
+    rand = random.random()
+    print(rand)
+    client.send_message("/filter", rand)
     time.sleep(1)
