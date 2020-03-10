@@ -62,7 +62,7 @@ while 1:
         if( not(cyConverted < 0) and not(cyConverted > 10) ):
             print("(%d,%d)" % (cx, cyConverted))
 
-            # pushes all values in the List down by one, and adds the new value pair into the List
+            # pushes all values in the Frame List down by one, and adds the new value pair into the List
             for x in range(FRAME_DATA_LIST_SIZE-2, -1, -1):
                 frameDataList[x + 1] = frameDataList[x]
             frameDataList[0] = FishData(cx, cy)
@@ -74,13 +74,16 @@ while 1:
                 print(frameDataListString)
                 client.send_message("/x", cx)
                 client.send_message("/y", cyConverted)
+                # Draws a line to show the difference of the two points
+                cv2.line(img, (frameDataList[FRAME_DATA_LIST_SIZE - 1].x, frameDataList[FRAME_DATA_LIST_SIZE - 1].y),  (cx, cy),
+                           (255, 255, 0), thickness=2)
                 # Draws a circle to show the last remembered point
                 cv2.circle(img, (frameDataList[FRAME_DATA_LIST_SIZE - 1].x, frameDataList[FRAME_DATA_LIST_SIZE - 1].y), 5,
-                           (0, 255, 0), thickness=5, lineType=0)
+                           (0, 255, 255), thickness=5, lineType=0)
             else:
                 # if the list still has temp values, skip sending, and collect more
                 print("Collecting Initial Values... ")
-        cv2.circle(img, (cx,cy), 5, (0, 255, 0), thickness=5, lineType=0)
+        cv2.circle(img, (cx, cy), 5, (0, 255, 0), thickness=5, lineType=0)
 
 
 
