@@ -11,6 +11,25 @@ face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 # https://github.com/Itseez/opencv/blob/master/data/haarcascades/haarcascade_eye.xml
 ##eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 
+# Parameter Generation Sructs
+FRAME_DATA_LIST_SIZE = 30    # How much frame data to remember at once
+frameDataList = []           # List containing remembered frame data
+frameDataListString = ""     # String for printing the frame data for testing
+
+# class describing Fish Frame Data
+class FishData:
+    x = -1  # x coordinate
+    y = -1  # y coordinate
+
+    # constructor override
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    # toString override
+    def __str__(self):
+        return "[ x = " + str(self.x) + " , y = " + str(self.y) + " ]"
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--ip", default="127.0.0.1",
@@ -21,7 +40,11 @@ if __name__ == "__main__":
 
     client = udp_client.SimpleUDPClient(args.ip, args.port)
 
-cap = cv2.VideoCapture('jacksontest.mp4')
+cap = cv2.VideoCapture(0)
+
+# initializes temp objects in the frameDataList
+for x in range(0, FRAME_DATA_LIST_SIZE):
+    frameDataList.append(FishData(-1,-1))
 
 while 1:
     ret, img = cap.read()
@@ -38,10 +61,29 @@ while 1:
         cyConverted = int( (cy-50)/50 + 1)
         if( not(cyConverted < 0) and not(cyConverted > 10) ):
             print("(%d,%d)" % (cx, cyConverted))
-            client.send_message("/x", cx)
-            client.send_message("/y", cyConverted)
 
-        cv2.circle(img, (cx,cy), 5, (0, 255, 0), thickness=5, lineType=0)
+            # pushes all values in the Frame List down by one, and adds the new value pair into the List
+            for x in range(FRAME_DATA_LIST_SIZE-2, -1, -1):
+                frameDataList[x + 1] = frameDataList[x]
+            frameDataList[0] = FishData(cx, cy)
+            # If the list has collected a full list of data, print the Data out, and send it
+            if(frameDataList[FRAME_DATA_LIST_SIZE-1].x > 0):
+                frameDataListString = ""
+                for x in frameDataList:
+                    frameDataListString += " " + str(x)
+                print(frameDataListString)
+                client.send_message("/x", cx)
+                client.send_message("/y", cyConverted)
+                # Draws a line to show the difference of the two points
+                cv2.line(img, (frameDataList[FRAME_DATA_LIST_SIZE - 1].x, frameDataList[FRAME_DATA_LIST_SIZE - 1].y),  (cx, cy),
+                           (255, 255, 0), thickness=2)
+                # Draws a circle to show the last remembered point
+                cv2.circle(img, (frameDataList[FRAME_DATA_LIST_SIZE - 1].x, frameDataList[FRAME_DATA_LIST_SIZE - 1].y), 5,
+                           (0, 255, 255), thickness=5, lineType=0)
+            else:
+                # if the list still has temp values, skip sending, and collect more
+                print("Collecting Initial Values... ")
+        cv2.circle(img, (cx, cy), 5, (0, 255, 0), thickness=5, lineType=0)
 
 
 
