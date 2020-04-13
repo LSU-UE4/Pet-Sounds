@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import argparse
+import math
 from pythonosc import udp_client
 
 
@@ -15,6 +16,16 @@ eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 FRAME_DATA_LIST_SIZE = 30    # How much frame data to remember at once
 frameDataList = []           # List containing remembered frame data
 frameDataListString = ""     # String for printing the frame data for testing
+frameInformationString = ""  # String for printing all the information below
+
+DeltaX = -1
+DeltaY = -1
+slope = -1
+angle = -1
+quadrant = -1
+magnitude = -1
+stopped = -1
+STOPPED_TRESHOLD = 4         # threshold for determining if the fish is stopped in place or is actively moving
 
 # class describing Fish Frame Data
 class FishData:
@@ -72,6 +83,38 @@ while 1:
                 for x in frameDataList:
                     frameDataListString += " " + str(x)
                 print(frameDataListString)
+
+                # generates the parameters from x and y
+                DeltaX = frameDataList[FRAME_DATA_LIST_SIZE-1].x - cx  # Change in X
+                DeltaY = frameDataList[FRAME_DATA_LIST_SIZE-1].y - cy  # Change in Y
+                # slope
+                if(DeltaX == 0):
+                    # no slope, avoid divide by 0
+                    slope = 999
+                else:
+                    slope = DeltaY / DeltaX
+                # angle
+                angle = math.atan(slope)
+                # quadrant
+                if(DeltaX > 0 and DeltaY > 0):
+                    quadrant = 1
+                elif(DeltaX <= 0 and DeltaY > 0):
+                    quadrant = 2
+                elif(DeltaX <= 0 and DeltaY <= 0):
+                    quadrant = 3
+                else:
+                    quadrant = 4
+                # magnitude
+                    magnitude = math.sqrt( math.pow(DeltaX, 2) + math.pow(DeltaY, 2) )
+                # stopped
+                if(magnitude >= STOPPED_TRESHOLD):
+                    stopped = -1  # fish is moving
+                else:
+                    stopped = 1   # fish is still
+
+                frameInformationString = "Slope: " + str(slope) + " Angle: " + str(angle) + " Quadrant: " + str(quadrant) + " Magnitude: " + str(magnitude) + " Stopped?: " + str(stopped)
+                print(frameInformationString)
+
                 client.send_message("/x", cx)
                 client.send_message("/y", cyConverted)
                 # Draws a line to show the difference of the two points
