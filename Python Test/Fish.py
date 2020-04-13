@@ -9,7 +9,7 @@ from pythonosc import udp_client
 # https://github.com/Itseez/opencv/blob/master/data/haarcascades/haarcascade_frontalface_default.xml
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 # https://github.com/Itseez/opencv/blob/master/data/haarcascades/haarcascade_eye.xml
-eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
+##eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
     client = udp_client.SimpleUDPClient(args.ip, args.port)
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture('jacksontest.mp4')
 
 while 1:
     ret, img = cap.read()
