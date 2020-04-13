@@ -10,7 +10,7 @@ from pythonosc import udp_client
 # https://github.com/Itseez/opencv/blob/master/data/haarcascades/haarcascade_frontalface_default.xml
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 # https://github.com/Itseez/opencv/blob/master/data/haarcascades/haarcascade_eye.xml
-eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
+##eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 
 # Parameter Generation Sructs
 FRAME_DATA_LIST_SIZE = 30    # How much frame data to remember at once
