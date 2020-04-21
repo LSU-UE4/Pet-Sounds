@@ -12,6 +12,8 @@ face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 # https://github.com/Itseez/opencv/blob/master/data/haarcascades/haarcascade_eye.xml
 ##eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 
+fish_cascade = cv2.CascadeClassifier('newfish.xml')
+
 # Parameter Generation Sructs
 FRAME_DATA_LIST_SIZE = 30    # How much frame data to remember at once
 frameDataList = []           # List containing remembered frame data
@@ -51,7 +53,7 @@ if __name__ == "__main__":
 
     client = udp_client.SimpleUDPClient(args.ip, args.port)
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('fishyfishy.mp4')
 
 # initializes temp objects in the frameDataList
 for x in range(0, FRAME_DATA_LIST_SIZE):
@@ -62,8 +64,11 @@ while 1:
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 
-    for (x, y, w, h) in faces:
-        cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
+    fishs = fish_cascade.detectMultiScale(gray, 30, 30)
+
+
+    for (x, y, w, h) in fishs:
+        cv2.rectangle(img, (x, y), (x + w, y + h), (255, 255, 0), 2)
         roi_gray = gray[y:y + h, x:x + w]
         roi_color = img[y:y + h, x:x + w]
 
