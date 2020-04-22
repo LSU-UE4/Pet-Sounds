@@ -8,11 +8,11 @@ from pythonosc import udp_client
 # multiple cascades: https://github.com/Itseez/opencv/tree/master/data/haarcascades
 
 # https://github.com/Itseez/opencv/blob/master/data/haarcascades/haarcascade_frontalface_default.xml
-face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+#face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 # https://github.com/Itseez/opencv/blob/master/data/haarcascades/haarcascade_eye.xml
 ##eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 
-fish_cascade = cv2.CascadeClassifier('newfish.xml')
+fish_cascade = cv2.CascadeClassifier('green2.xml')
 
 # Parameter Generation Sructs
 FRAME_DATA_LIST_SIZE = 30    # How much frame data to remember at once
@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     client = udp_client.SimpleUDPClient(args.ip, args.port)
 
-cap = cv2.VideoCapture('fishyfishy.mp4')
+cap = cv2.VideoCapture('justadot.mp4')
 
 # initializes temp objects in the frameDataList
 for x in range(0, FRAME_DATA_LIST_SIZE):
@@ -62,9 +62,9 @@ for x in range(0, FRAME_DATA_LIST_SIZE):
 while 1:
     ret, img = cap.read()
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+    ##faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 
-    fishs = fish_cascade.detectMultiScale(gray, 30, 30)
+    fishs = fish_cascade.detectMultiScale(gray,40,40)
 
 
     for (x, y, w, h) in fishs:
