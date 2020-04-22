@@ -27,7 +27,7 @@ angle = -1
 quadrant = -1
 magnitude = -1
 stopped = -1
-STOPPED_TRESHOLD = 4         # threshold for determining if the fish is stopped in place or is actively moving
+STOPPED_THRESHOLD = 15         # threshold for determining if the fish is stopped in place or is actively moving
 
 # class describing Fish Frame Data
 class FishData:
@@ -75,7 +75,7 @@ while 1:
         cx = int(x+(w/2))
         cy = int(y+(h/2))
         cyConverted = int( (cy-50)/50 + 1)
-        if( not(cyConverted < 0) and not(cyConverted > 10) ):
+        if( not(cyConverted < 0) ):#and not(cyConverted > 10) ):
             print("(%d,%d)" % (cx, cyConverted))
 
             # pushes all values in the Frame List down by one, and adds the new value pair into the List
@@ -112,16 +112,20 @@ while 1:
                 # magnitude
                     magnitude = math.sqrt( math.pow(DeltaX, 2) + math.pow(DeltaY, 2) )
                 # stopped
-                if(magnitude >= STOPPED_TRESHOLD):
-                    stopped = -1  # fish is moving
+                if(magnitude >= STOPPED_THRESHOLD):
+                    stopped = 1  # fish is moving
                 else:
-                    stopped = 1   # fish is still
+                    stopped = -1   # fish is still
 
                 frameInformationString = "Slope: " + str(slope) + " Angle: " + str(angle) + " Quadrant: " + str(quadrant) + " Magnitude: " + str(magnitude) + " Stopped?: " + str(stopped)
                 print(frameInformationString)
 
                 client.send_message("/x", cx)
                 client.send_message("/y", cyConverted)
+                client.send_message("/q", quadrant)
+                client.send_message("/v", magnitude)
+                client.send_message("/a", angle)
+                client.send_message("/s", stopped)
                 # Draws a line to show the difference of the two points
                 cv2.line(img, (frameDataList[FRAME_DATA_LIST_SIZE - 1].x, frameDataList[FRAME_DATA_LIST_SIZE - 1].y),  (cx, cy),
                            (255, 255, 0), thickness=2)
