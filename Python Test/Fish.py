@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     client = udp_client.SimpleUDPClient(args.ip, args.port)
 
-cap = cv2.VideoCapture('justadot.mp4')
+cap = cv2.VideoCapture('TrackingCircle10min.mp4')
 
 # initializes temp objects in the frameDataList
 for x in range(0, FRAME_DATA_LIST_SIZE):
